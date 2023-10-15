@@ -3,14 +3,34 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 
+const Resume = require('./models/resumeModel')
+
+app.use(express.json())
+
 
 //routes 
 app.get('/', (req, res) => {
     res.send('Hello NODE API')
 })
 
-app.get('/header', (req, res) => {
-    res.send('Resume Header')
+app.get('/resume', async(req, res) => {
+    try{
+        const resume = await Resume.find({})
+        res.status(200).json(resume)
+    } catch(error){
+        console.log(error.message);
+        res.status(500).json({messsage: error.message})
+    }
+})
+
+app.post('/resume', async(req, res) => {
+    try {
+        const resume = await Resume.create(req.body)
+        res.status(200).json(resume)
+    } catch(error) {
+        console.log(error.message);
+        res.status(500).json({messsage: error.message})
+    }
 })
 
 
@@ -23,19 +43,3 @@ mongoose
     console.log(error)
 })
 
-
-
-/*require('dotenv').config()
-
-const express = require('express')
-const app = express()
-const mongoose = require('mongoose')
-
-mongoose.connect(process.env.DATABASE_URL)
-const db = mongoose.connection
-db.on('error', (error) => console.error(error))
-db.once('open', () => console.log('Connected to database'))
-
-app.use(express.json())
-
-app.listen(3000, () => console.log('server has started')) */
